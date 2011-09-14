@@ -1,0 +1,39 @@
+This repository contains three nearest-neighbor codes for estimation 
+of photometric redshifts.
+Installation instructions for each code are in the file INSTALLATION in 
+the corresponding directory.
+
+
+----------------------------------------------------------------
+Credits
+----------------------------------------------------------------
+
+The codes presented here were written by Carlos Cunha and Charles Stibitz. 
+The Kd-tree code used in all programs was written by C. Stibitz based on 
+Numerical Recipes 3rd edition, W. H. Press et al. 2007. The use of the 
+Kd-tree for nearest neighbor searches and their subsequent application to 
+photometric redshifts was developed by C. Cunha, M. Lima, H. Oyaizu, H. Lin 
+and J. Frieman.
+
+----------------------------------------------------------------
+Acknowledgements 
+----------------------------------------------------------------
+
+
+If using any of these codes for scientific publications please acknowledge the papers where each program was first used.
+
+For NNE, please cite: 
+Photometric Redshift Error Estimators¡ H. Oyaizu, C. E. Cunha, M. Lima, H. Lin, J. A. Frieman, 2008, ApJ, 689, 709-720 [astro-ph0711.0962].
+
+For the weights code:
+Estimating the Redshift Distribution of Faint Galaxy Samples: Weighting Training Set Objects¡M. Lima, C. E. Cunha, H. Oyaizu, E. S. Sheldon, H. Lin, J. A. Frieman 2008, MNRAS, 390, 118-130 [astro-ph0801.3822]
+
+For the pofz code:
+Estimating the Redshift Distribution of Faint Galaxy Samples - II: Applications and tests of a new method¡ C. E. Cunha, M. Lima, H. Oyaizu, J. A. Frieman, H. Lin 2009, MNRAS, 396, 2379-2398 [astro-ph0810.2991]
+
+----------------------------------------------------------------
+Questions/Comments?
+----------------------------------------------------------------
+
+Contact carloscunha47@gmail.com
+

@@ -1,0 +1,130 @@
+============================================================================
+INSTRUCTIONS:
+============================================================================
+
+
+-------------------------------
+Weights code:
+-------------------------------
+
+- To extract the folder where the code is type: tar -xvzf weights.tgz 
+- This will create a directory called 'weights'. In the directory, type 'make'
+- To run the code with the example files, type: ./weights.x train.tbl photo.tbl NNEI
+
+The files train.tbl and photo.tbl are example files that I included. 
+The train.tbl file contains the training set, that is, the sample with known spectroscopic redshifts.
+The photo.tbl is the photometric set, that is, the sample whose redshift distribution (or any other 
+redshift statistics) you want to estimate.
+The format for the train.tbl and photo.tbl files is: zspec, anything1, anything2, observables (5).
+The zspec column in the photo.tbl file is not used by the algorithm, but it must be there.
+'NNEI' speficies the number of nearest neighbors used in the weights calculation.
+The code (calcWeights.cpp) is set to use 5 observables. 
+To change this, you must (unfortunately) go inside the code and manually change the value passed to the variable "dim". 
+The kd-tree algorithm assumes all observables are in the range [-50:50]. 
+To change this range, edit the value of the variable "big" inside kdtrees.h.
+In the example files I've used simulated SDSS ugriz magnitudes. For SDSS data, I've gotten better 
+results using the 4 colors + r-magnitude.
+We're still working on finding the optimal combination of observables.  
+
+Outputs:
+nnweight.prw: Almost identical to train.tbl, except that the third column now contains the weights assigned 
+to that training set object.
+phot.num: Contains the first two columns of photo.tbl plus an additional column with the number of times 
+the corresponding photometric 
+object was used in the weights calculation. 
+If this number is zero, the object was not used, hence the weights estimate is not taking it into account. 
+In the language of Cunha et al (2009), this object is not part of the recoverable photometric set.
+By trial and error, we've found that 5 nearest neighbor is a good number of nearest neighbors to use when estimating the
+recoverable photometric set.
+
+Tips: For large training and photometric sets, we find that the results are very insensitive to the number 
+of nearest neighbors used.
+For small training and/or photometric sets, the number of nearest neighbors can matter a little. 
+Typically, less neighbors is better.
+However, if one is going to use the p(z) code, it is better if the number of nearest neighbors 
+for the weights and p(z) calculation match.
+In this case, a large number of neighbors is required, if one is to get meaningful p(z) estimates. 
+Our practice is to use 100 neighbors usually.
+In this case, one is advised to run the weights code with less neighbors to estimate the recoverable training set. 
+Then, remove objects with weight=0 and calculate the weights using 100 nearest neighbors. 
+
+When the photometric sample is small, we've often found it useful to progressively reduce the size of 
+the training set by removing training set objects with weight=0, and recalculating using less nearest neighbors. 
+For example, perform the weights calculations with 100 NN. Remove all
+training set objects with weight=0. Re-run the code using only 20 nearest neighbors. Cull the objects with weights=0. 
+Keep going until nearest neighbors is very small - 1, or 2 nearest neighbors is not bad, though 5 may be enough. 
+This procedure is mostly useful to reduce boundary effects, in cases where the photometric set has a strange selection.
+
+Of course, the best number of nearest neighbors to use will vary with catalogs. 
+So, make sure you experiment with a few different values.
+
+For more details, read Lima, et al. 2008 (arXiv:0801.3822)
+
+-------------------------------
+p(z) code
+-------------------------------
+
+- To extract the folder where the code is type: tar -xvzf pofz.tgz 
+- In the directory created, type make
+- To run, type: ./pofz.x training photometric NNEI Grid  Res  (zmin  zmax)
+
+The training file should be whatever is output from the weights code (format:  zspec, anything1, weights, observables (5))
+The photometric file should be the photo.tbl. 
+The number of observables is currently set to 5.  To change this, you must (unfortunately) 
+go inside the code and manually change the value passed to the variable "dim". 
+If the training set is representative, then one does not need to run the weights code. 
+In this case, the third column of the training input file should be set to a fixed number.
+NNEI indicates the number of nearest neighbors used to estimate p(z).
+GRID: number of bins used to generate the p(z) histograms
+RES: how much smoothing will be performed (RES=GRID corresponds to no smoothing, the smaller the value of RES, 
+the larger the smoothing, with RES =1 being the limit).
+zmin, zmax (optional): redshift limits of the p(z) histogram. Defaults are zmin=0 and zmax=1.0
+
+Outputs:
+output.grid: file containing the centroids of the bins for the p(z) histograms
+output.etbl: zspec, anything1, p(z_i) (i=1...GRID)
+
+
+For more details, read Cunha, et al. 2009 (arXiv:0810.2991)
+
+
+-------------------------------
+NNE code
+-------------------------------
+
+- To extract the folder where the code is type: tar -xvzf nne.tgz 
+- In the directory created, type make
+- To run, type: ./nne.x train.nne.tbl photo.nne.tbl 
+
+The files train.nne.tbl and photo.nne.tbl are example files that I included. 
+The train.nne.tbl file contains the training set, that is, the sample with known spectroscopic redshifts.
+The photo.nne.tbl is the photometric set, that is, the sample whose redshift distribution (or any 
+other redshift statistics) you want to estimate.
+The format for the train.tbl files is: zspec, zphot, weights, observables (5).
+The format for the photo.tbl files is: zspec, zphot, anything2, observables (5).
+The zspec column in the photo.tbl file is not used by the algorithm, but it must be there.
+The photo-z's from any algorithm can be used, though we found better results when training set methods were used.
+The weights don't make much difference when estimating the error, so, for test runs, you can just set them 
+to 1 to save time. 
+In a serious run it's safer to use the proper weights.
+However, the weights code is important in defining the "recoverable" part of the photometric set
+(see Cunha, et al. 2009 [arXiv:0810.2991] for the definition of recoverable)
+
+The error estimate outputted by the NNE code is the 68% width of the (zphot-ztrue) distribution.
+Contrast this to the p(z) code which is an estimator of p(ztrue).
+Other measures of width can easily be put it, one can also use a width estimated from the p(z) 
+instead of the p(zphot-ztrue). 
+The number of neighbors used to estimate the distribution is set to 100.
+The number of observables is currently set to 5.  To change this, you must (unfortunately) 
+go inside the code and manually change the value passed to the variable "dim". 
+
+
+
+Outputs:
+output.etbl: zspec, zphot, error, observables (5).
+
+For more details, read Oyaizu, et al. 2008 (arXiv:0711.0962)
+
+============================================================================
+Question/comments? Contact Carlos at carloscunha47@gmail.com
+============================================================================
