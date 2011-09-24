@@ -88,6 +88,31 @@ output.etbl: zspec, anything1, p(z_i) (i=1...GRID)
 For more details, read Cunha, et al. 2009 (arXiv:0810.2991)
 
 
+
+-------------------------------
+polynomial-fitting code
+-------------------------------
+
+- To extract the folder where the code is type: tar -xvzf pofz.tgz 
+- In the directory created, type make
+- To run, type: ./pofz.x training photometric NNEI order  (zmin  zmax)
+
+The training file should be something like train.tbl.
+Unlike the pofz code, this code does not use the weights.
+The photometric file should be the photo.tbl. 
+The number of observables is currently set to 5.  To change this, you must (unfortunately) 
+go inside the code and manually change the value passed to the variable "dim". 
+NNEI indicates the number of nearest neighbors used to estimate p(z).
+order indicates the order of the polynomial you want to use. Must be between 1 and 3.
+zmin, zmax (optional): redshift limits of the p(z) histogram. Defaults are zmin=0 and zmax=1.0
+
+Outputs:
+output.etbl: zspec, zphot
+
+
+For more details, read Cunha, Huterer, Busha and Wechsler 2011 (arXiv:0911.----)
+
+
 -------------------------------
 NNE code
 -------------------------------

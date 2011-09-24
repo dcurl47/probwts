@@ -16,16 +16,16 @@ void find_NR_NMAG2(const char *filename, int *NR, int *NMAG);
 int main(int argc, char **argv) {
   
   
-	if (argc < 4) {
+  if (argc < 4) {
     fprintf(stderr, "Usage: %s train_tbl photo_tbl NNEAR\n", argv[0]);
     exit(1);
   }
  
   
   
+  int NNEAR = 5;
+  if (argc > 3) NNEAR = atoi(argv[3]);
   
-  int NNEAR = atoi(argv[3]);
-
   int tNR, tNMAG;
   int pNR, pNMAG;
   
